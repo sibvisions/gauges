@@ -1,0 +1,24 @@
+{
+  "name": "ui-gauges",
+  "version": "1.0.0",
+  "description": "A collection of SVG based gauges",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "rollup --config",
+    "watch": "rollup --config --watch"
+  },
+  "author": "Immanuel Bauer",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@rollup/plugin-typescript": "^8.2.5",
+    "rollup": "^2.56.3",
+    "rollup-plugin-scss": "^3.0.0",
+    "sass": "^1.38.2",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.2"
+  },
+  "dependencies": {
+    "uuid": "^8.3.2"
+  }
+}

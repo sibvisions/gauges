@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>UIGauges Demo</title>
+        <link rel="stylesheet" href="dist/bundle.css">
+    </head>
+    <body>
+        <div id="ring-gauge" style="width: 300px;"></div>
+        <div id="arc-gauge" style="width: 300px;"></div>
+        <div id="meter-gauge" style="width: 300px;"></div>
+        <div id="speed-gauge" style="width: 300px;"></div>
+        <script src="./dist/bundle.js"></script>
+        <script>
+            var elem = document.querySelector("#ring-gauge");
+            var ring = new UIGauges.RingGauge(elem, {
+                value: 12, 
+                max: 100,
+                size: 300, 
+                label: "Test Ring",
+                steps: [10,30,70,90]
+            });
+
+            elem = document.querySelector("#arc-gauge");
+            var arc = new UIGauges.ArcGauge(elem, {
+                value: 12, 
+                max: 100,
+                size: 300, 
+                label: "Test Arc",
+                steps: [10,30,70,90]
+            });
+
+            elem = document.querySelector("#meter-gauge");
+            var meter = new UIGauges.MeterGauge(elem, {
+                value: 12, 
+                max: 100,
+                size: 300, 
+                label: "Test Meter",
+            });
+
+            elem = document.querySelector("#speed-gauge");
+            var speed = new UIGauges.SpeedometerGauge(elem, {
+                value: 12, 
+                max: 100,
+                size: 300, 
+                label: "Test Meter",
+                steps: [10,30,70,90]
+            });
+
+            setInterval(function() {
+                ring.update({
+                    value: Math.round(Math.random() * 100)
+                })
+                arc.update({
+                    value: Math.round(Math.random() * 100)
+                })
+                meter.update({
+                    value: Math.round(Math.random() * 100)
+                })
+                speed.update({
+                    value: Math.round(Math.random() * 100)
+                })
+            }, 1000)
+        </script>
+    </body>
+</html>

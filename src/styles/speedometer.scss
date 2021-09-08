@@ -1,0 +1,15 @@
+.ui-gauge-meter--speed {
+    padding-bottom: 0;
+
+    .ui-gauge-meter__value {
+        top: 50%;
+        left: 50%;
+        bottom: auto;
+        transform: translate(-50%, 100%);
+        font-weight: bold;
+        background: rgba(#fff, .2);
+        border-radius: .25em;
+        padding: .25em .5em;
+        border: 1px solid var(--ui-gauge-color__border);
+    }
+}

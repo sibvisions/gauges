@@ -1,0 +1,32 @@
+.ui-gauge-ring {
+    width: 100%;
+    position: relative;
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    &__label {
+        position: absolute;
+        text-align: center;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: bold;
+    }
+
+    &__border {
+        stroke: var(--ui-gauge-color__border);
+        fill: none;
+    }
+
+    &__bg {
+        fill: none;
+    }
+
+    &__fg {
+        fill: none;
+        transition: all .5s ease-in-out;
+    }
+}
