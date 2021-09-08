@@ -7,8 +7,14 @@
     "build": "rollup --config",
     "watch": "rollup --config --watch"
   },
-  "author": "Immanuel Bauer",
-  "license": "ISC",
+  "author": "SIBVisions",
+  "license": "Apache-2.0",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@rollup/plugin-typescript": "^8.2.5",
