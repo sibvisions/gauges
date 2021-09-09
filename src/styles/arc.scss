@@ -8,8 +8,8 @@
     }
 
     text {
-        font-size: 7px;
-        fill: #999;
+        font-size: var(--ui-gauge-font-size__tick-label);
+        fill: var(--ui-gauge-color__tick-label);
     }
 
     &__label {

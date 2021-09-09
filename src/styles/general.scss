@@ -1,12 +1,23 @@
 :root {
+    /* type */
+    --ui-gauge-font-family: 'San Francisco', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --ui-gauge-font-size__label: .875rem;
+    --ui-gauge-font-size__tick-label: .75rem;
+
+    /* colors */
     --ui-gauge-color__error: #DF5353;
     --ui-gauge-color__warning: #DDDF0D;
     --ui-gauge-color__ok: #55BF3B;
     --ui-gauge-color__ticks: #000;
     --ui-gauge-color__subticks: #999;
     --ui-gauge-color__needle: #000;
-    --ui-gauge-color__ticklabels: #666;
+    --ui-gauge-color__label: #666;
+    --ui-gauge-color__tick-label: #666;
     --ui-gauge-color__border: #bbb;
     --ui-gauge-gradient__top: #fff;
     --ui-gauge-gradient__bottom: #ccc;
+}
+
+.ui-gauge {
+    font-family: var(--ui-gauge-font-family);
 }

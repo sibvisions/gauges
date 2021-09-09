@@ -1,6 +1,6 @@
-import { getColor, makeSVGElement, uuidv4 } from './helpers';
+import { AbstractGauge } from './gauge';
+import { getColor, makeSVGElement } from './helpers';
 import './styles/meter.scss';
-import type { Hook } from './types';
 
 export interface MeterGaugeOptions {
     value: number, 
@@ -15,6 +15,7 @@ export interface MeterGaugeOptions {
     steps?: [number, number, number, number],
     id?: string,
     tickLabelsInside?: boolean,
+    tickLabelOffset?: number,
 }
 
 const defaultOptions:Partial<MeterGaugeOptions> = {
@@ -28,30 +29,24 @@ const defaultOptions:Partial<MeterGaugeOptions> = {
     tickLabelsInside: false,
 }
 
-export class MeterGauge {
-    private options: MeterGaugeOptions;
-    private initial: boolean = true;
-    private hooks: Hook[] = [];
+export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
     protected wrapper: HTMLDivElement;
 
     constructor (element: HTMLElement, options: MeterGaugeOptions) {
-        this.options = {
-            id: uuidv4(),
-            ...defaultOptions,
-            ...options
-        };
+        super(options, defaultOptions);
 
         const wrapper = document.createElement("div");
         this.wrapper = wrapper;
+        wrapper.classList.add("ui-gauge");
         wrapper.classList.add("ui-gauge-meter");
 
         //setup svg element
         const svg = makeSVGElement("svg");
         wrapper.appendChild(svg);
-        this.addHook(({ size, circle, tickLabelsInside }) => {
+        this.addHook(({ size, circle, tickLabelsInside, tickLabelOffset }) => {
              //XXX: the 1.2 factor is a magic number
-            svg.setAttribute("viewBox", `0 0 ${size} ${circle < .5 ? size * Math.min(1, circle * 1.2) + (tickLabelsInside ? 0 : 10) : size}`);
-        }, [ "size" ])
+            svg.setAttribute("viewBox", `0 0 ${size} ${circle < .5 ? size * Math.min(1, circle * 1.2) + (tickLabelsInside ? 0 : 2 * (tickLabelOffset || 10)) : size}`);
+        }, [ "size", "tickLabelOffset" ])
 
         //various defs
         const defs = makeSVGElement("defs");
@@ -111,9 +106,9 @@ export class MeterGauge {
         //tick shift group
         const tickShiftGroup = makeSVGElement("g");
         svg.appendChild(tickShiftGroup);
-        this.addHook(({ tickLabelsInside }) => {
-            tickShiftGroup.setAttribute("transform", `translate(0 ${tickLabelsInside ? 0 : 10})`); 
-        }, [ "tickLabelsInside" ])
+        this.addHook(({ tickLabelsInside, tickLabelOffset }) => {
+            tickShiftGroup.setAttribute("transform", `translate(0 ${tickLabelsInside ? 0 :  2 * (tickLabelOffset || 10)})`); 
+        }, [ "tickLabelsInside", "tickLabelOffset" ])
 
         //bg 
         const bg = makeSVGElement("cricle"); 
@@ -220,7 +215,6 @@ export class MeterGauge {
                 
                 const tl = makeSVGElement("text");
                 tl.classList.add("ui-gauge-meter__ticklabel");
-                tl.setAttribute("dominant-baseline", "middle");
                 tl.setAttribute("x", `${x}`);
                 tl.setAttribute("y", `${y}`);
                 tl.innerHTML = (idx * max / (ticks - 1)).toFixed(1).replace(/[,.]0$/, '');
@@ -276,113 +270,88 @@ export class MeterGauge {
         element.appendChild(wrapper);
     }
 
-    private addHook(callback: Function, keys: (keyof MeterGaugeOptions)[]) {
-        this.hooks.push({
-            callback,
-            keys
-        });
-    }
+    protected updateData(combinedOptions: MeterGaugeOptions) {
+        const { value, size, color, id, thickness, steps, tickLabelsInside, circle, max, ticks, subTicks, tickLabelOffset } = combinedOptions;
 
-    update(options: Partial<MeterGaugeOptions> = {}) {
-        const combinedOptions = { ...this.options, ...options };
-
-        //get the keys of changed option values
-        const changed = Object.keys(options).filter(k => options[k] !== this.options[k])
-
-        //if this is the first update or if there are changes
-        if (this.initial || changed.length) {
-            const { value, size, color, id, thickness, steps, tickLabelsInside, circle, max, ticks, subTicks } = combinedOptions;
-
-            //precalculate various values
-            const r = (size - thickness) * .5;
-            const tr = r + thickness * .25;
-            const ir = r - thickness - 2;
-            const tlr = r + (tickLabelsInside ? -13 : 6);
-            const circumference = 2 * Math.PI * r * circle;
-            const tickCircumference = 2 * Math.PI * tr * circle;
-            const innerCircumference =  2 * Math.PI * ir * circle;
-            const ht = thickness * .5;
-            const hs = size * .5;
-            const sin = (1 - Math.sin(Math.PI * circle));
-            const inset = sin * r;
-            const iinset = sin * ir;
-            const tinset = sin * tr;
-        
-            const tickSize = 1;
-            const subTickSize = .5;
-            const needleLength = hs + thickness;
-            const needleRotation = 360 * circle * value / max - 180 * circle;
-        
-            let dasharray = [tickSize, circumference / (ticks - 1) - tickSize];
-            let subDasharray: number[] = [];
-        
-            if (subTicks > 0) {
-                const tickSegment = ((tickCircumference / (ticks - 1) - tickSize) - subTicks * subTickSize) / (subTicks + 1);
-                subDasharray = [0, tickSize + tickSegment];
-                for (let i = 0; i < subTicks; i++) {
-                    subDasharray.push(subTickSize, tickSegment)
-                }
+        //precalculate various values
+        const r = (size - thickness) * .5;
+        const tr = r + thickness * .25;
+        const ir = r - thickness - 2;
+        const tlr = r + (tickLabelOffset || (tickLabelsInside ? -20 : 10));
+        const circumference = 2 * Math.PI * r * circle;
+        const tickCircumference = 2 * Math.PI * tr * circle;
+        const innerCircumference =  2 * Math.PI * ir * circle;
+        const ht = thickness * .5;
+        const hs = size * .5;
+        const sin = (1 - Math.sin(Math.PI * circle));
+        const inset = sin * r;
+        const iinset = sin * ir;
+        const tinset = sin * tr;
+    
+        const tickSize = 1;
+        const subTickSize = .5;
+        const needleLength = hs + thickness;
+        const needleRotation = 360 * circle * value / max - 180 * circle;
+    
+        let dasharray = [tickSize, circumference / (ticks - 1) - tickSize];
+        let subDasharray: number[] = [];
+    
+        if (subTicks > 0) {
+            const tickSegment = ((tickCircumference / (ticks - 1) - tickSize) - subTicks * subTickSize) / (subTicks + 1);
+            subDasharray = [0, tickSize + tickSegment];
+            for (let i = 0; i < subTicks; i++) {
+                subDasharray.push(subTickSize, tickSegment)
             }
-        
-            const maskID = `mask-${id}`;
-            const markerID = `end-${id}`;
-            const gradientID = `gradient-${id}`;
-        
-            const height = Math.sqrt(r * r - Math.pow(r - inset, 2));
-            const bottom = (circle >= .5 ? r + height : r - height) + thickness * .5;
-            const leftScale = ht + thickness + 2 + iinset;
-            const rightScale = size - ht - thickness - 2 - iinset;
-            const scaleHeight = Math.sqrt(ir * ir - Math.pow(ir - iinset, 2));
-            const bottomScale = (circle >= .5 ? ir + scaleHeight : ir - scaleHeight) + thickness + 4;
-        
-            const ticksHeight = Math.sqrt(tr * tr - Math.pow(tr - tinset, 2));
-            const bottomTicks = (circle >= .5 ? tr + ticksHeight : tr - ticksHeight) + thickness * .25;
-        
-            const arcFlag = circle >= .5 ? 1 : 0;
-
-            const data = {
-                ...combinedOptions,
-                r,
-                tr,
-                ir,
-                tlr,
-                circumference,
-                tickCircumference,
-                innerCircumference,
-                hs,
-                ht,
-                inset,
-                iinset,
-                tinset,
-                tickSize,
-                subTickSize,
-                needleLength,
-                needleRotation,
-                dasharray,
-                subDasharray,
-                height,
-                bottom,
-                leftScale,
-                rightScale,
-                bottomScale,
-                ticksHeight,
-                bottomTicks,
-                arcFlag,
-                maskID,
-                markerID,
-                gradientID,
-                color: color || getColor(value, steps)
-            };
-
-            //run hooks
-            this.hooks.forEach(h => {
-                if(this.initial || h.keys.some(k => changed.includes(k))) {
-                    h.callback(data);
-                }
-            });
-            this.initial = false;
         }
+    
+        const maskID = `mask-${id}`;
+        const markerID = `end-${id}`;
+        const gradientID = `gradient-${id}`;
+    
+        const height = Math.sqrt(r * r - Math.pow(r - inset, 2));
+        const bottom = (circle >= .5 ? r + height : r - height) + thickness * .5;
+        const leftScale = ht + thickness + 2 + iinset;
+        const rightScale = size - ht - thickness - 2 - iinset;
+        const scaleHeight = Math.sqrt(ir * ir - Math.pow(ir - iinset, 2));
+        const bottomScale = (circle >= .5 ? ir + scaleHeight : ir - scaleHeight) + thickness + 4;
+    
+        const ticksHeight = Math.sqrt(tr * tr - Math.pow(tr - tinset, 2));
+        const bottomTicks = (circle >= .5 ? tr + ticksHeight : tr - ticksHeight) + thickness * .25;
+    
+        const arcFlag = circle >= .5 ? 1 : 0;
 
-        this.options = combinedOptions;
+        return {
+            ...combinedOptions,
+            r,
+            tr,
+            ir,
+            tlr,
+            circumference,
+            tickCircumference,
+            innerCircumference,
+            hs,
+            ht,
+            inset,
+            iinset,
+            tinset,
+            tickSize,
+            subTickSize,
+            needleLength,
+            needleRotation,
+            dasharray,
+            subDasharray,
+            height,
+            bottom,
+            leftScale,
+            rightScale,
+            bottomScale,
+            ticksHeight,
+            bottomTicks,
+            arcFlag,
+            maskID,
+            markerID,
+            gradientID,
+            color: color || getColor(value, steps)
+        };
     }
 }

@@ -1,6 +1,6 @@
-import { getColor, makeSVGElement, uuidv4 } from './helpers';
+import { AbstractGauge } from './gauge';
+import { getColor, makeSVGElement } from './helpers';
 import './styles/ring.scss';
-import type { Hook } from './types';
 
 export interface RingGaugeOptions {
     value: number, 
@@ -20,19 +20,13 @@ const defaultOptions:Partial<RingGaugeOptions> = {
     thickness: 20, 
 }
 
-export class RingGauge {
-    private options: RingGaugeOptions;
-    private initial: boolean = true;
-    private hooks: Hook[] = [];
+export class RingGauge extends AbstractGauge<RingGaugeOptions> {
 
     constructor (element: HTMLElement, options: RingGaugeOptions) {
-        this.options = {
-            id: uuidv4(),
-            ...defaultOptions,
-            ...options
-        };
+        super(options, defaultOptions);
 
         const wrapper = document.createElement("div");
+        wrapper.classList.add("ui-gauge");
         wrapper.classList.add("ui-gauge-ring");
 
         //setup svg element
@@ -146,48 +140,23 @@ export class RingGauge {
         element.appendChild(wrapper);
     }
 
-    private addHook(callback: Function, keys: string[]) {
-        this.hooks.push({
-            callback,
-            keys
-        });
-    }
-
-    update(options: Partial<RingGaugeOptions> = {}) {
-        const combinedOptions = { ...this.options, ...options };
+    protected updateData(combinedOptions: RingGaugeOptions) {
         const { value, size, color, id, thickness, steps } = combinedOptions;
+        //precalculate various values
+        const r = (size - thickness - 1) * .5;
+        const circumference = 2 * Math.PI * r;
+        const hs = size * .5;
+        const maskID = `mask-${id}`;
+        const gradientID = `gradient-${id}`;
 
-        //get the keys of changed option values
-        const changed = Object.keys(options).filter(k => options[k] !== this.options[k])
-
-        //if this is the first update or if there are changes
-        if (this.initial || changed.length) {
-            //precalculate various values
-            const r = (size - thickness - 1) * .5;
-            const circumference = 2 * Math.PI * r;
-            const hs = size * .5;
-            const maskID = `mask-${id}`;
-            const gradientID = `gradient-${id}`;
-
-            const data = {
-                ...combinedOptions,
-                r,
-                circumference,
-                hs,
-                maskID,
-                gradientID,
-                color: color || getColor(value, steps)
-            };
-
-            //run hooks
-            this.hooks.forEach(h => {
-                if(this.initial || h.keys.some(k => changed.includes(k))) {
-                    h.callback(data);
-                }
-            });
-            this.initial = false;
-        }
-
-        this.options = combinedOptions;
+        return {
+            ...combinedOptions,
+            r,
+            circumference,
+            hs,
+            maskID,
+            gradientID,
+            color: color || getColor(value, steps)
+        };
     }
 }

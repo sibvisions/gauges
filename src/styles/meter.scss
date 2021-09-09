@@ -10,8 +10,8 @@
     }
 
     &__label {
-        fill: #666;
-        font-size: 6px;
+        fill: var(--ui-gauge-color__label);
+        font-size: var(--ui-gauge-font-size__label);
         text-anchor: middle;
     }
 
@@ -44,7 +44,8 @@
     }
 
     &__ticklabel {
-        fill: var(--ui-gauge-color__ticklabels);
+        font-size: var(--ui-gauge-font-size__tick-label);
+        fill: var(--ui-gauge-color__tick-label);
         dominant-baseline: middle;
         text-anchor: middle;
     }

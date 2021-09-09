@@ -3,12 +3,23 @@
     <head>
         <title>UIGauges Demo</title>
         <link rel="stylesheet" href="dist/bundle.css">
+        <style>
+            .gauges {
+                display: grid;
+                padding: 3rem;
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+            }
+        </style>
     </head>
     <body>
-        <div id="ring-gauge" style="width: 300px;"></div>
-        <div id="arc-gauge" style="width: 300px;"></div>
-        <div id="meter-gauge" style="width: 300px;"></div>
-        <div id="speed-gauge" style="width: 300px;"></div>
+        <div class="gauges">
+            <div id="ring-gauge" style="width: 300px;"></div>
+            <div id="arc-gauge" style="width: 300px;"></div>
+            <div id="meter-gauge" style="width: 300px;"></div>
+            <div id="speed-gauge" style="width: 300px;"></div>
+        </div>
+
         <script src="./dist/bundle.js"></script>
         <script>
             var elem = document.querySelector("#ring-gauge");
@@ -31,7 +42,7 @@
 
             elem = document.querySelector("#meter-gauge");
             var meter = new UIGauges.MeterGauge(elem, {
-                value: 12, 
+                value: 0, 
                 max: 100,
                 size: 300, 
                 label: "Test Meter",
@@ -39,10 +50,10 @@
 
             elem = document.querySelector("#speed-gauge");
             var speed = new UIGauges.SpeedometerGauge(elem, {
-                value: 12, 
+                value: 0, 
                 max: 100,
                 size: 300, 
-                label: "Test Meter",
+                label: "Test Speedometer",
                 steps: [10,30,70,90]
             });
 
