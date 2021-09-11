@@ -57,22 +57,23 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         marker.setAttribute("orient", "auto");
         defs.appendChild(marker);
         this.addHook(({ markerID }) => {
-            gradient.setAttribute("id", markerID);
+            marker.setAttribute("id", markerID);
         }, [ "id" ])
         this.addHook(({ tickSize, thickness }) => {
-            gradient.setAttribute("viewBox", `0 0 ${tickSize} ${thickness}`);
-            gradient.setAttribute("refX", `${tickSize * .5}`);
-            gradient.setAttribute("refY", `${thickness * .5}`);
-            gradient.setAttribute("markerWidth", tickSize);
-            gradient.setAttribute("markerHeight", thickness);
+            marker.setAttribute("viewBox", `0 0 ${tickSize} ${thickness}`);
+            marker.setAttribute("refX", `${tickSize * .5}`);
+            marker.setAttribute("refY", `${thickness * .5}`);
+            marker.setAttribute("markerWidth", tickSize);
+            marker.setAttribute("markerHeight", thickness);
         }, [ "thickness" ])
 
         const markerRect = makeSVGElement("rect");
         markerRect.setAttribute("x", "0");
         markerRect.setAttribute("y", "0");
+        marker.appendChild(markerRect);
         this.addHook(({ tickSize, thickness }) => {
-            gradient.setAttribute("width", `${tickSize}`);
-            gradient.setAttribute("height", `${thickness}`);
+            markerRect.setAttribute("width", `${tickSize}`);
+            markerRect.setAttribute("height", `${thickness}`);
         }, [ "thickness" ])
 
         //setup gradient
@@ -111,7 +112,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         }, [ "tickLabelsInside", "tickLabelOffset" ])
 
         //bg 
-        const bg = makeSVGElement("cricle"); 
+        const bg = makeSVGElement("circle"); 
         bg.classList.add("ui-gauge-meter__bg");
         bg.setAttribute("stroke-width", ".5");
         bg.setAttribute("stroke", "var(--ui-gauge-color__border)");
@@ -193,7 +194,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
             subTicks.setAttribute("stroke-width", `${ht}`);
             subTicks.setAttribute("stroke-dashoffset", `${tickSize * .5}`);
             subTicks.setAttribute("stroke-dasharray", `${subDasharray.join(' ')}`);
-            bg.setAttribute("visibility", subDasharray.length ? "" : "hidden");
+            subTicks.setAttribute("visibility", subDasharray.length ? "" : "hidden");
         }, [ "size", "thickness", "ticks", "circle" ])
 
 
