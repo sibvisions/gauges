@@ -25,3 +25,19 @@ const xmlns = "http://www.w3.org/2000/svg";
 export function makeSVGElement<T extends SVGElement>(name: string) {
     return document.createElementNS(xmlns, name) as T;
 }
+
+export function maybeScaleDefaults<T extends { size?: number }>(options: T, size: number, skip: (keyof T)[] = []):T {
+    if (size && options.size && size != options.size) {
+        const out: T = {...options};
+        const scale = size / options.size;
+        for(let k in out) {
+            if(!skip.includes(k) && typeof out[k] === "number") {
+                //@ts-ignore
+                out[k] *= scale;
+            }
+        }
+        return out;
+    } else {
+        return options;
+    }
+}

@@ -1,5 +1,5 @@
 import { AbstractGauge } from './gauge';
-import { getColor, makeSVGElement } from './helpers';
+import { getColor, makeSVGElement, maybeScaleDefaults } from './helpers';
 import './styles/meter.scss';
 
 export interface MeterGaugeOptions {
@@ -33,7 +33,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
     protected wrapper: HTMLDivElement;
 
     constructor (element: HTMLElement, options: MeterGaugeOptions) {
-        super(options, defaultOptions);
+        super(options, maybeScaleDefaults(defaultOptions, options.size, ["ticks", "subTicks", "circle", "max"]));
 
         const wrapper = document.createElement("div");
         this.wrapper = wrapper;
@@ -43,9 +43,9 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         //setup svg element
         const svg = makeSVGElement("svg");
         wrapper.appendChild(svg);
-        this.addHook(({ size, circle, tickLabelsInside, tickLabelOffset }) => {
+        this.addHook(({ size, circle, tickLabelsInside, tickLabelOffset, sizeScale }) => {
              //XXX: the 1.2 factor is a magic number
-            svg.setAttribute("viewBox", `0 0 ${size} ${circle < .5 ? size * Math.min(1, circle * 1.2) + (tickLabelsInside ? 0 : 2 * (tickLabelOffset || 10)) : size}`);
+            svg.setAttribute("viewBox", `0 0 ${size} ${circle < .5 ? size * Math.min(1, circle * 1.2) + (tickLabelsInside ? 0 : 2 * (tickLabelOffset || 5 * sizeScale)) : size}`);
         }, [ "size", "tickLabelOffset" ])
 
         //various defs
@@ -107,9 +107,9 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         //tick shift group
         const tickShiftGroup = makeSVGElement("g");
         svg.appendChild(tickShiftGroup);
-        this.addHook(({ tickLabelsInside, tickLabelOffset }) => {
-            tickShiftGroup.setAttribute("transform", `translate(0 ${tickLabelsInside ? 0 :  2 * (tickLabelOffset || 10)})`); 
-        }, [ "tickLabelsInside", "tickLabelOffset" ])
+        this.addHook(({ tickLabelsInside, tickLabelOffset, sizeScale }) => {
+            tickShiftGroup.setAttribute("transform", `translate(0 ${tickLabelsInside ? 0 :  2 * (tickLabelOffset || 5 * sizeScale)})`); 
+        }, [ "tickLabelsInside", "tickLabelOffset", "size" ])
 
         //bg 
         const bg = makeSVGElement("circle"); 
@@ -126,7 +126,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
             bg.setAttribute("fill", `url(#${gradientID})`);
         }, [ "id" ])
         this.addHook(({ circle }) => {
-            bg.setAttribute("visibility", circle > .5 ? null : "hidden");
+            bg.setAttribute("visibility", circle > .5 ? "" : "hidden");
         }, [ "circle" ])
 
         //scale
@@ -136,7 +136,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
             scaleGroup.setAttribute("fill", `url(#${maskID})`);
         }, [ "id" ])
         this.addHook(({ steps }) => {
-            scaleGroup.setAttribute("visibility", steps ? null : "hidden");
+            scaleGroup.setAttribute("visibility", steps ? "" : "hidden");
         }, [ "steps" ])
 
         const scaleOK = makeSVGElement("path");
@@ -231,10 +231,10 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         this.addHook(({ label: lbl }) => {
             label.innerHTML = lbl;
         }, [ "label" ])
-        this.addHook(({ hs }) => {
+        this.addHook(({ size, hs, circle }) => {
             label.setAttribute("x", hs);
-            label.setAttribute("y", `${hs - 25}`);
-        }, [ "size" ])
+            label.setAttribute("y", `${size * Math.min(.4, circle)}`);
+        }, [ "size", "circle" ])
 
         //needle
         const needleGroup = makeSVGElement("g");
@@ -274,11 +274,12 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
     protected updateData(combinedOptions: MeterGaugeOptions) {
         const { value, size, color, id, thickness, steps, tickLabelsInside, circle, max, ticks, subTicks, tickLabelOffset } = combinedOptions;
 
+        const sizeScale = size / 100;
         //precalculate various values
         const r = (size - thickness) * .5;
         const tr = r + thickness * .25;
         const ir = r - thickness - 2;
-        const tlr = r + (tickLabelOffset || (tickLabelsInside ? -20 : 10));
+        const tlr = r + (tickLabelOffset || ((tickLabelsInside ? -10 : 5) * sizeScale));
         const circumference = 2 * Math.PI * r * circle;
         const tickCircumference = 2 * Math.PI * tr * circle;
         const innerCircumference =  2 * Math.PI * ir * circle;
@@ -314,7 +315,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         const leftScale = ht + thickness + 2 + iinset;
         const rightScale = size - ht - thickness - 2 - iinset;
         const scaleHeight = Math.sqrt(ir * ir - Math.pow(ir - iinset, 2));
-        const bottomScale = (circle >= .5 ? ir + scaleHeight : ir - scaleHeight) + thickness + 4;
+        const bottomScale = (circle >= .5 ? ir + scaleHeight : ir - scaleHeight) + thickness + thickness * .5 + 2;
     
         const ticksHeight = Math.sqrt(tr * tr - Math.pow(tr - tinset, 2));
         const bottomTicks = (circle >= .5 ? tr + ticksHeight : tr - ticksHeight) + thickness * .25;
@@ -352,6 +353,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
             maskID,
             markerID,
             gradientID,
+            sizeScale,
             color: color || getColor(value, steps)
         };
     }

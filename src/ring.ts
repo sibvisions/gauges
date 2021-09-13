@@ -1,5 +1,5 @@
 import { AbstractGauge } from './gauge';
-import { getColor, makeSVGElement } from './helpers';
+import { getColor, makeSVGElement, maybeScaleDefaults } from './helpers';
 import './styles/ring.scss';
 
 export interface RingGaugeOptions {
@@ -23,7 +23,7 @@ const defaultOptions:Partial<RingGaugeOptions> = {
 export class RingGauge extends AbstractGauge<RingGaugeOptions> {
 
     constructor (element: HTMLElement, options: RingGaugeOptions) {
-        super(options, defaultOptions);
+        super(options, maybeScaleDefaults(defaultOptions, options.size));
 
         const wrapper = document.createElement("div");
         wrapper.classList.add("ui-gauge");

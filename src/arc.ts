@@ -1,5 +1,5 @@
 import { AbstractGauge } from './gauge';
-import { getColor, makeSVGElement } from './helpers';
+import { getColor, makeSVGElement, maybeScaleDefaults } from './helpers';
 import './styles/arc.scss';
 
 export interface ArcGaugeOptions {
@@ -23,7 +23,7 @@ const defaultOptions:Partial<ArcGaugeOptions> = {
 export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
 
     constructor (element: HTMLElement, options: ArcGaugeOptions) {
-        super(options, defaultOptions);
+        super(options, maybeScaleDefaults(defaultOptions, options.size));
 
         const wrapper = document.createElement("div");
         wrapper.classList.add("ui-gauge");
@@ -116,10 +116,9 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         rect.setAttribute("y", "0");
         innerGroup.appendChild(rect);
         this.addHook(({ size }) => {
-            innerGroup.setAttribute("width", size);
-            innerGroup.setAttribute("height", size);
+            rect.setAttribute("width", size);
+            rect.setAttribute("height", size);
         }, [ "size" ])
-
 
         const bg = makeSVGElement("path");
         bg.classList.add("ui-gauge-arc__bg");
@@ -131,7 +130,6 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         this.addHook(({ gradientID }) => {
             bg.setAttribute("stroke", `url(#${gradientID})`);
         }, [ "id" ]);
-
 
         const fg = makeSVGElement("path");
         fg.classList.add("ui-gauge-arc__fg");
