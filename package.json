@@ -4,8 +4,8 @@
   "description": "A collection of SVG based gauges",
   "main": "src/index.ts",
   "scripts": {
-    "build": "rollup --config",
-    "watch": "rollup --config --watch"
+    "build": "npx rollup --config",
+    "watch": "npx rollup --config --watch"
   },
   "author": "SIBVisions",
   "license": "Apache-2.0",
