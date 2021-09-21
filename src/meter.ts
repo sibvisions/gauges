@@ -8,6 +8,7 @@ export interface MeterGaugeOptions {
     size: number, 
     thickness: number, 
     label: string,
+    title?: string,
     ticks?: number,
     subTicks?: number,
     circle?: number,
@@ -40,9 +41,25 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         wrapper.classList.add("ui-gauge");
         wrapper.classList.add("ui-gauge-meter");
 
+        const canvas = document.createElement("div");
+        canvas.classList.add("ui-gauge__canvas");
+        wrapper.appendChild(canvas);
+
+        //setup title
+        const title = document.createElement("div");
+        title.classList.add("ui-gauge__title");
+        this.addHook(({ title: t }) => {
+            title.innerHTML = t;
+            if(t) {
+                wrapper.prepend(title);
+            } else {
+                title.remove();
+            }
+        }, [ "title" ]);
+
         //setup svg element
         const svg = makeSVGElement("svg");
-        wrapper.appendChild(svg);
+        canvas.appendChild(svg);
         this.addHook(({ size, circle, tickLabelsInside, tickLabelOffset, sizeScale }) => {
              //XXX: the 1.2 factor is a magic number
             svg.setAttribute("viewBox", `0 0 ${size} ${circle < .5 ? size * Math.min(1, circle * 1.2) + (tickLabelsInside ? 0 : 2 * (tickLabelOffset || 5 * sizeScale)) : size}`);
@@ -261,7 +278,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         //setup gauge value
         const value = document.createElement("div");
         value.classList.add("ui-gauge-meter__value");
-        wrapper.appendChild(value);
+        canvas.appendChild(value);
         this.addHook(({ value: v }) => {
             value.innerHTML = `${v}`;
         }, [ "value" ])

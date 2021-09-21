@@ -1,7 +1,10 @@
 .ui-gauge-meter {
     width: 100%;
     position: relative;
-    padding-bottom: 2em;
+
+    .ui-gauge__canvas {
+        padding-bottom: 2em;
+    }
 
     svg {
         width: 100%;

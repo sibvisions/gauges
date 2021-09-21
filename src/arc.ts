@@ -8,6 +8,7 @@ export interface ArcGaugeOptions {
     size: number, 
     thickness: number, 
     label: string,
+    title?: string,
     color?: string,
     steps?: [number, number, number, number],
     id?: string,
@@ -29,9 +30,25 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         wrapper.classList.add("ui-gauge");
         wrapper.classList.add("ui-gauge-arc");
 
+        const canvas = document.createElement("div");
+        canvas.classList.add("ui-gauge__canvas");
+        wrapper.appendChild(canvas);
+
+        //setup title
+        const title = document.createElement("div");
+        title.classList.add("ui-gauge__title");
+        this.addHook(({ title: t }) => {
+            title.innerHTML = t;
+            if(t) {
+                wrapper.prepend(title);
+            } else {
+                title.remove();
+            }
+        }, [ "title" ]);
+
         //setup svg element
         const svg = makeSVGElement("svg");
-        wrapper.appendChild(svg);
+        canvas.appendChild(svg);
         this.addHook(({ size }) => {
             svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
         }, [ "size" ])
@@ -167,7 +184,7 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         //setup gauge label
         const label = document.createElement("div");
         label.classList.add("ui-gauge-arc__label");
-        wrapper.appendChild(label);
+        canvas.appendChild(label);
         this.addHook(({ value, label: lbl }) => {
             label.innerHTML = `${value} ${lbl}`;
         }, [ "value", "label" ])
