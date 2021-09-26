@@ -26,7 +26,13 @@ export default {
     }],
     plugins: [
         nodeResolve(),
-        typescript(),
+        typescript({
+            rootDir: "src/",
+            declaration: true,
+            declarationDir: "types/",
+            declarationMap: false,
+            tsconfig: './tsconfig.json',
+        }),
         scss({
             output: 'dist/bundle.min.css',
             outputStyle: 'compressed',
