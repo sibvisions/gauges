@@ -5,9 +5,9 @@ import './styles/arc.scss';
 export interface ArcGaugeOptions {
     value: number, 
     max: number,
-    size: number, 
-    thickness: number, 
     label: string,
+    size?: number, 
+    thickness?: number, 
     title?: string,
     color?: string,
     steps?: [number, number, number, number],

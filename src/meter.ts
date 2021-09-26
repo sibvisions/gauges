@@ -5,9 +5,9 @@ import './styles/meter.scss';
 export interface MeterGaugeOptions {
     value: number, 
     max: number,
-    size: number, 
-    thickness: number, 
     label: string,
+    size?: number, 
+    thickness?: number, 
     title?: string,
     ticks?: number,
     subTicks?: number,
