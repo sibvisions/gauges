@@ -2,7 +2,8 @@
   "name": "ui-gauges",
   "version": "1.0.0",
   "description": "A collection of SVG based gauges",
-  "main": "src/index.ts",
+  "main": "dist/bundle.esm.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "build": "npx rollup --config",
     "watch": "npx rollup --config --watch"
