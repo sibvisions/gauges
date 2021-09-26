@@ -1,6 +1,10 @@
 .ui-gauge-meter--speed {
     padding-bottom: 0;
 
+    .ui-gauge__canvas {
+        padding-bottom: 0;
+    }
+
     .ui-gauge-meter__value {
         top: 50%;
         left: 50%;
