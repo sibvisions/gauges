@@ -1,0 +1,68 @@
+import { AbstractGauge } from './gauge';
+import './styles/meter.scss';
+export interface MeterGaugeOptions {
+    value: number;
+    max: number;
+    label: string;
+    size?: number;
+    thickness?: number;
+    title?: string;
+    ticks?: number;
+    subTicks?: number;
+    circle?: number;
+    color?: string;
+    steps?: [number, number, number, number];
+    id?: string;
+    tickLabelsInside?: boolean;
+    tickLabelOffset?: number;
+}
+export declare class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
+    protected wrapper: HTMLDivElement;
+    constructor(element: HTMLElement, options: MeterGaugeOptions);
+    protected updateData(combinedOptions: MeterGaugeOptions): {
+        r: number;
+        tr: number;
+        ir: number;
+        tlr: number;
+        circumference: number;
+        tickCircumference: number;
+        innerCircumference: number;
+        hs: number;
+        ht: number;
+        inset: number;
+        iinset: number;
+        tinset: number;
+        tickSize: number;
+        subTickSize: number;
+        needleLength: number;
+        needleRotation: number;
+        dasharray: number[];
+        subDasharray: number[];
+        height: number;
+        bottom: number;
+        leftScale: number;
+        rightScale: number;
+        bottomScale: number;
+        ticksHeight: number;
+        bottomTicks: number;
+        arcFlag: number;
+        maskID: string;
+        markerID: string;
+        gradientID: string;
+        sizeScale: number;
+        color: string;
+        value: number;
+        max: number;
+        label: string;
+        size?: number;
+        thickness?: number;
+        title?: string;
+        ticks?: number;
+        subTicks?: number;
+        circle?: number;
+        steps?: [number, number, number, number];
+        id?: string;
+        tickLabelsInside?: boolean;
+        tickLabelOffset?: number;
+    };
+}
