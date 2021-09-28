@@ -25,17 +25,22 @@
 
 .ui-gauge {
     font-family: var(--ui-gauge-font-family);
+    display: flex;
+    flex-direction: column;
 
     &__title {
         font-weight: bold;
         text-align: center;
         line-height: 1;
         font-size: var(--ui-gauge-font-size__title);
-        margin: var(--ui-gauge-margin__title) 0;
+        margin: 0 0 var(--ui-gauge-margin__title) 0;
         color: var(--ui-gauge-color__title);
+        flex-shrink: 0;
     }
 
     &__canvas {
         position: relative;
+        flex-shrink: 1;
+        overflow: hidden;
     }
 }
