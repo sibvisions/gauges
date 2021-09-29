@@ -27,6 +27,7 @@
     font-family: var(--ui-gauge-font-family);
     display: flex;
     flex-direction: column;
+    height: 100%;
 
     &__title {
         font-weight: bold;
@@ -42,5 +43,6 @@
         position: relative;
         flex-shrink: 1;
         overflow: hidden;
+        display: flex;
     }
 }
