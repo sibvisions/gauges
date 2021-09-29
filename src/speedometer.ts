@@ -1,4 +1,3 @@
-import { maybeScaleDefaults } from './helpers';
 import { MeterGauge, MeterGaugeOptions } from './meter';
 import './styles/speedometer.scss';
 

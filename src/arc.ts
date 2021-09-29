@@ -3,11 +3,13 @@ import { getColor, makeSVGElement, maybeScaleDefaults } from './helpers';
 import './styles/arc.scss';
 
 export interface ArcGaugeOptions {
-    value: number, 
+    value: number,
     max: number,
     label: string,
-    size?: number, 
-    thickness?: number, 
+    size?: number,
+    width?: number,
+    height?: number,
+    thickness?: number,
     title?: string,
     color?: string,
     steps?: [number, number, number, number],
@@ -29,6 +31,10 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         const wrapper = document.createElement("div");
         wrapper.classList.add("ui-gauge");
         wrapper.classList.add("ui-gauge-arc");
+        this.addHook(({ width, height }) => {
+            wrapper.style.width = width ? `${width}px` : null;
+            wrapper.style.height = height ? `${height}px` : null;
+        }, [ "width", "height" ]);
 
         const canvas = document.createElement("div");
         canvas.classList.add("ui-gauge__canvas");

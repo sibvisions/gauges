@@ -3,11 +3,13 @@ import { getColor, makeSVGElement, maybeScaleDefaults } from './helpers';
 import './styles/meter.scss';
 
 export interface MeterGaugeOptions {
-    value: number, 
+    value: number,
     max: number,
     label: string,
-    size?: number, 
-    thickness?: number, 
+    size?: number,
+    width?: number,
+    height?: number,
+    thickness?: number,
     title?: string,
     ticks?: number,
     subTicks?: number,
@@ -40,6 +42,10 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         this.wrapper = wrapper;
         wrapper.classList.add("ui-gauge");
         wrapper.classList.add("ui-gauge-meter");
+        this.addHook(({ width, height }) => {
+            wrapper.style.width = width ? `${width}px` : null;
+            wrapper.style.height = height ? `${height}px` : null;
+        }, [ "width", "height" ]);
 
         const canvas = document.createElement("div");
         canvas.classList.add("ui-gauge__canvas");
@@ -359,7 +365,6 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
             needleRotation,
             dasharray,
             subDasharray,
-            height,
             bottom,
             leftScale,
             rightScale,
