@@ -5,6 +5,8 @@ export interface ArcGaugeOptions {
     max: number;
     label: string;
     size?: number;
+    width?: number;
+    height?: number;
     thickness?: number;
     title?: string;
     color?: string;
@@ -25,6 +27,8 @@ export declare class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         max: number;
         label: string;
         size?: number;
+        width?: number;
+        height?: number;
         thickness?: number;
         title?: string;
         steps?: [number, number, number, number];

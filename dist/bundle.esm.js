@@ -213,6 +213,11 @@ var RingGauge = /** @class */ (function (_super) {
         var wrapper = document.createElement("div");
         wrapper.classList.add("ui-gauge");
         wrapper.classList.add("ui-gauge-ring");
+        _this.addHook(function (_a) {
+            var width = _a.width, height = _a.height;
+            wrapper.style.width = width ? width + "px" : null;
+            wrapper.style.height = height ? height + "px" : null;
+        }, ["width", "height"]);
         var canvas = document.createElement("div");
         canvas.classList.add("ui-gauge__canvas");
         wrapper.appendChild(canvas);
@@ -363,6 +368,11 @@ var ArcGauge = /** @class */ (function (_super) {
         var wrapper = document.createElement("div");
         wrapper.classList.add("ui-gauge");
         wrapper.classList.add("ui-gauge-arc");
+        _this.addHook(function (_a) {
+            var width = _a.width, height = _a.height;
+            wrapper.style.width = width ? width + "px" : null;
+            wrapper.style.height = height ? height + "px" : null;
+        }, ["width", "height"]);
         var canvas = document.createElement("div");
         canvas.classList.add("ui-gauge__canvas");
         wrapper.appendChild(canvas);
@@ -557,6 +567,11 @@ var MeterGauge = /** @class */ (function (_super) {
         _this.wrapper = wrapper;
         wrapper.classList.add("ui-gauge");
         wrapper.classList.add("ui-gauge-meter");
+        _this.addHook(function (_a) {
+            var width = _a.width, height = _a.height;
+            wrapper.style.width = width ? width + "px" : null;
+            wrapper.style.height = height ? height + "px" : null;
+        }, ["width", "height"]);
         var canvas = document.createElement("div");
         canvas.classList.add("ui-gauge__canvas");
         wrapper.appendChild(canvas);
@@ -849,7 +864,7 @@ var MeterGauge = /** @class */ (function (_super) {
         var ticksHeight = Math.sqrt(tr * tr - Math.pow(tr - tinset, 2));
         var bottomTicks = (circle >= .5 ? tr + ticksHeight : tr - ticksHeight) + thickness * .25;
         var arcFlag = circle >= .5 ? 1 : 0;
-        return __assign(__assign({}, combinedOptions), { r: r, tr: tr, ir: ir, tlr: tlr, circumference: circumference, tickCircumference: tickCircumference, innerCircumference: innerCircumference, hs: hs, ht: ht, inset: inset, iinset: iinset, tinset: tinset, tickSize: tickSize, subTickSize: subTickSize, needleLength: needleLength, needleRotation: needleRotation, dasharray: dasharray, subDasharray: subDasharray, height: height, bottom: bottom, leftScale: leftScale, rightScale: rightScale, bottomScale: bottomScale, ticksHeight: ticksHeight, bottomTicks: bottomTicks, arcFlag: arcFlag, maskID: maskID, markerID: markerID, gradientID: gradientID, sizeScale: sizeScale, color: color || getColor(value, steps) });
+        return __assign(__assign({}, combinedOptions), { r: r, tr: tr, ir: ir, tlr: tlr, circumference: circumference, tickCircumference: tickCircumference, innerCircumference: innerCircumference, hs: hs, ht: ht, inset: inset, iinset: iinset, tinset: tinset, tickSize: tickSize, subTickSize: subTickSize, needleLength: needleLength, needleRotation: needleRotation, dasharray: dasharray, subDasharray: subDasharray, bottom: bottom, leftScale: leftScale, rightScale: rightScale, bottomScale: bottomScale, ticksHeight: ticksHeight, bottomTicks: bottomTicks, arcFlag: arcFlag, maskID: maskID, markerID: markerID, gradientID: gradientID, sizeScale: sizeScale, color: color || getColor(value, steps) });
     };
     return MeterGauge;
 }(AbstractGauge));

@@ -5,6 +5,8 @@ export interface RingGaugeOptions {
     max: number;
     label: string;
     size?: number;
+    width?: number;
+    height?: number;
     thickness?: number;
     title?: string;
     color?: string;
@@ -24,6 +26,8 @@ export declare class RingGauge extends AbstractGauge<RingGaugeOptions> {
         max: number;
         label: string;
         size?: number;
+        width?: number;
+        height?: number;
         thickness?: number;
         title?: string;
         steps?: [number, number, number, number];

@@ -5,6 +5,8 @@ export interface MeterGaugeOptions {
     max: number;
     label: string;
     size?: number;
+    width?: number;
+    height?: number;
     thickness?: number;
     title?: string;
     ticks?: number;
@@ -38,7 +40,6 @@ export declare class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         needleRotation: number;
         dasharray: number[];
         subDasharray: number[];
-        height: number;
         bottom: number;
         leftScale: number;
         rightScale: number;
@@ -55,6 +56,8 @@ export declare class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         max: number;
         label: string;
         size?: number;
+        width?: number;
+        height?: number;
         thickness?: number;
         title?: string;
         ticks?: number;
