@@ -176,7 +176,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         scaleWarning.classList.add("ui-gauge-meter__scale--warning");
         scaleGroup.appendChild(scaleWarning);
         this.addHook(({ leftScale, bottomScale, ir, arcFlag, rightScale, thickness, innerCircumference, steps, max }) => {
-            if(!steps || steps.length < 3) { return }
+            if(!steps || steps.length < 3 || !steps[1] || !steps[2]) { return }
             scaleWarning.setAttribute("d", `M ${leftScale} ${bottomScale} A ${ir} ${ir} 0 ${arcFlag} 1 ${rightScale} ${bottomScale}`);
             scaleWarning.setAttribute("stroke-width", thickness);
             scaleWarning.setAttribute("stroke-dasharray", `${innerCircumference * steps[1] / max} ${innerCircumference * (steps[2] - steps[1]) / max} ${innerCircumference}`);
@@ -187,10 +187,10 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         scaleError.classList.add("ui-gauge-meter__scale--error");
         scaleGroup.appendChild(scaleError);
         this.addHook(({ leftScale, bottomScale, ir, arcFlag, rightScale, thickness, innerCircumference, steps, max }) => {
-            if(!steps || steps.length < 4) { return }
+            if(!steps || steps.length < 4 || !steps[0] && !steps[3]) { return }
             scaleError.setAttribute("d", `M ${leftScale} ${bottomScale} A ${ir} ${ir} 0 ${arcFlag} 1 ${rightScale} ${bottomScale}`);
             scaleError.setAttribute("stroke-width", thickness);
-            scaleError.setAttribute("stroke-dasharray", `${innerCircumference * steps[0] / max} ${innerCircumference * (steps[3] - steps[0]) / max} ${innerCircumference}`);
+            scaleError.setAttribute("stroke-dasharray", `${innerCircumference * steps[0] / max} ${innerCircumference * (steps[3] ?? max - steps[0]) / max} ${innerCircumference}`);
         }, [ "size", "thickness", "circle", "steps", "max" ])
 
         //ticks

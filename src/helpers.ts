@@ -12,9 +12,9 @@ export function getColor(value: number, steps?: [number, number, number, number]
     if(!steps) {
         return colorOK;
     }
-    if(value <= steps[0] || value >= steps[3]) {
+    if(value <= (steps[0] ?? Number.MIN_VALUE) || value >= (steps[3] ?? Number.MAX_VALUE)) {
         return colorError;
-    } else if (value <= steps[1] || value >= steps[2]) {
+    } else if (value <= (steps[1] ?? Number.MIN_VALUE) || value >= (steps[2] ?? Number.MAX_VALUE)) {
         return colorWarning;
     } else {
         return colorOK;

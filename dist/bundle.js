@@ -138,13 +138,14 @@
     var colorError = "var(--ui-gauge-color__error)";
     /** get the color based on the value and steps */
     function getColor(value, steps) {
+        var _a, _b, _c, _d;
         if (!steps) {
             return colorOK;
         }
-        if (value <= steps[0] || value >= steps[3]) {
+        if (value <= ((_a = steps[0]) !== null && _a !== void 0 ? _a : Number.MIN_VALUE) || value >= ((_b = steps[3]) !== null && _b !== void 0 ? _b : Number.MAX_VALUE)) {
             return colorError;
         }
-        else if (value <= steps[1] || value >= steps[2]) {
+        else if (value <= ((_c = steps[1]) !== null && _c !== void 0 ? _c : Number.MIN_VALUE) || value >= ((_d = steps[2]) !== null && _d !== void 0 ? _d : Number.MAX_VALUE)) {
             return colorWarning;
         }
         else {
@@ -709,7 +710,7 @@
             scaleGroup.appendChild(scaleWarning);
             _this.addHook(function (_a) {
                 var leftScale = _a.leftScale, bottomScale = _a.bottomScale, ir = _a.ir, arcFlag = _a.arcFlag, rightScale = _a.rightScale, thickness = _a.thickness, innerCircumference = _a.innerCircumference, steps = _a.steps, max = _a.max;
-                if (!steps || steps.length < 3) {
+                if (!steps || steps.length < 3 || !steps[1] || !steps[2]) {
                     return;
                 }
                 scaleWarning.setAttribute("d", "M " + leftScale + " " + bottomScale + " A " + ir + " " + ir + " 0 " + arcFlag + " 1 " + rightScale + " " + bottomScale);
@@ -721,13 +722,14 @@
             scaleError.classList.add("ui-gauge-meter__scale--error");
             scaleGroup.appendChild(scaleError);
             _this.addHook(function (_a) {
+                var _b;
                 var leftScale = _a.leftScale, bottomScale = _a.bottomScale, ir = _a.ir, arcFlag = _a.arcFlag, rightScale = _a.rightScale, thickness = _a.thickness, innerCircumference = _a.innerCircumference, steps = _a.steps, max = _a.max;
-                if (!steps || steps.length < 4) {
+                if (!steps || steps.length < 4 || !steps[0] && !steps[3]) {
                     return;
                 }
                 scaleError.setAttribute("d", "M " + leftScale + " " + bottomScale + " A " + ir + " " + ir + " 0 " + arcFlag + " 1 " + rightScale + " " + bottomScale);
                 scaleError.setAttribute("stroke-width", thickness);
-                scaleError.setAttribute("stroke-dasharray", innerCircumference * steps[0] / max + " " + innerCircumference * (steps[3] - steps[0]) / max + " " + innerCircumference);
+                scaleError.setAttribute("stroke-dasharray", innerCircumference * steps[0] / max + " " + innerCircumference * ((_b = steps[3]) !== null && _b !== void 0 ? _b : max - steps[0]) / max + " " + innerCircumference);
             }, ["size", "thickness", "circle", "steps", "max"]);
             //ticks
             var ticks = makeSVGElement("path");
