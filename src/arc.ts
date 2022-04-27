@@ -14,6 +14,8 @@ export interface ArcGaugeOptions {
     color?: string,
     steps?: [number, number, number, number],
     id?: string,
+    hideValue?: boolean,
+    formatValue?: (value: number) => string,
 }
 
 const defaultOptions:Partial<ArcGaugeOptions> = {
@@ -84,7 +86,7 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         maskPath.setAttribute("fill", "none");
         this.addHook(({ ht, hs, size, r, thickness }) => {
             maskPath.setAttribute("d", `M ${ht} ${hs} A ${r} ${r} 0 0 1 ${size - ht} ${hs}`); 
-            maskPath.setAttribute("stroke-width", thickness);
+            maskPath.setAttribute("stroke-width", thickness.toString());
         }, [ "size", "thickness" ])
         mask.appendChild(maskPath);
         defs.appendChild(mask);    
@@ -103,7 +105,7 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         outerGroup.appendChild(border);
         this.addHook(({ ht, hs, size, r, thickness }) => {
             border.setAttribute("d", `M ${ht} ${hs} A ${r} ${r} 0 0 1 ${size - ht} ${hs}`); 
-            border.setAttribute("stroke-width", thickness + 1);
+            border.setAttribute("stroke-width", (thickness + 1).toString());
         }, [ "size", "thickness" ]);
 
         const borderHead = makeSVGElement("rect");
@@ -113,7 +115,7 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         outerGroup.appendChild(borderHead);
         this.addHook(({ hs, thickness }) => {
             borderHead.setAttribute("y", hs); 
-            borderHead.setAttribute("width", thickness + 1);
+            borderHead.setAttribute("width", (thickness + 1).toString());
         }, [ "size", "thickness" ]);
 
         const borderTail = makeSVGElement("rect");
@@ -123,7 +125,7 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         this.addHook(({ hs, size, thickness }) => {
             borderTail.setAttribute("x", (size - thickness - .5).toString()); 
             borderTail.setAttribute("y", hs); 
-            borderTail.setAttribute("width", thickness + 1);
+            borderTail.setAttribute("width", (thickness + 1).toString());
         }, [ "size", "thickness" ]);
 
         //inner group
@@ -139,8 +141,8 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         rect.setAttribute("y", "0");
         innerGroup.appendChild(rect);
         this.addHook(({ size }) => {
-            rect.setAttribute("width", size);
-            rect.setAttribute("height", size);
+            rect.setAttribute("width", size.toString());
+            rect.setAttribute("height", size.toString());
         }, [ "size" ])
 
         const bg = makeSVGElement("path");
@@ -184,15 +186,15 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
             maxText.setAttribute("y", `${hs + 4}`);
         }, [ "size" ]);
         this.addHook(({ max }) => {
-            maxText.innerHTML = max;
+            maxText.innerHTML = max.toString();
         }, [ "max" ]);
 
         //setup gauge label
         const label = document.createElement("div");
         label.classList.add("ui-gauge-arc__label");
         canvas.appendChild(label);
-        this.addHook(({ value, label: lbl }) => {
-            label.innerHTML = `${value} ${lbl}`;
+        this.addHook(({ value, hideValue, formatValue, label: lbl }) => {
+            label.innerHTML = hideValue ? lbl : `${formatValue ? formatValue(value) : value} ${lbl}`;
         }, [ "value", "label" ])
 
         this.update();

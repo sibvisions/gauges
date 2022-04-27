@@ -17,6 +17,8 @@ export interface MeterGaugeOptions {
     id?: string;
     tickLabelsInside?: boolean;
     tickLabelOffset?: number;
+    hideValue?: boolean;
+    formatValue?: (value: number) => string;
 }
 export declare class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
     protected wrapper: HTMLDivElement;
@@ -67,5 +69,7 @@ export declare class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         id?: string;
         tickLabelsInside?: boolean;
         tickLabelOffset?: number;
+        hideValue?: boolean;
+        formatValue?: (value: number) => string;
     };
 }

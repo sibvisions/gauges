@@ -12,6 +12,8 @@ export interface ArcGaugeOptions {
     color?: string;
     steps?: [number, number, number, number];
     id?: string;
+    hideValue?: boolean;
+    formatValue?: (value: number) => string;
 }
 export declare class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
     constructor(element: HTMLElement, options: ArcGaugeOptions);
@@ -33,5 +35,7 @@ export declare class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         title?: string;
         steps?: [number, number, number, number];
         id?: string;
+        hideValue?: boolean;
+        formatValue?: (value: number) => string;
     };
 }

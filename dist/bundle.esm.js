@@ -267,7 +267,7 @@ var RingGauge = /** @class */ (function (_super) {
             maskCircle.setAttribute("cx", hs);
             maskCircle.setAttribute("cy", hs);
             maskCircle.setAttribute("r", r);
-            maskCircle.setAttribute("stroke-width", thickness);
+            maskCircle.setAttribute("stroke-width", thickness.toString());
         }, ["size", "thickness"]);
         mask.appendChild(maskCircle);
         defs.appendChild(mask);
@@ -280,7 +280,7 @@ var RingGauge = /** @class */ (function (_super) {
             border.setAttribute("cx", hs);
             border.setAttribute("cy", hs);
             border.setAttribute("r", r);
-            border.setAttribute("stroke-width", thickness + 1);
+            border.setAttribute("stroke-width", (thickness + 1).toString());
         }, ["size", "thickness"]);
         svg.appendChild(border);
         //group
@@ -297,8 +297,8 @@ var RingGauge = /** @class */ (function (_super) {
         rect.setAttribute("fill", "transparent");
         _this.addHook(function (_a) {
             var size = _a.size;
-            rect.setAttribute("width", size);
-            rect.setAttribute("height", size);
+            rect.setAttribute("width", size.toString());
+            rect.setAttribute("height", size.toString());
         }, ["size"]);
         group.appendChild(rect);
         //background
@@ -310,7 +310,7 @@ var RingGauge = /** @class */ (function (_super) {
             bg.setAttribute("cx", hs);
             bg.setAttribute("cy", hs);
             bg.setAttribute("r", r);
-            bg.setAttribute("stroke-width", thickness + 2);
+            bg.setAttribute("stroke-width", (thickness + 2).toString());
         }, ["size", "thickness"]);
         _this.addHook(function (_a) {
             var gradientID = _a.gradientID;
@@ -327,7 +327,7 @@ var RingGauge = /** @class */ (function (_super) {
             fg.setAttribute("r", r);
             fg.setAttribute("transform", "rotate(-90 " + hs + " " + hs + ")");
             fg.setAttribute("stroke", color);
-            fg.setAttribute("stroke-width", thickness + 2);
+            fg.setAttribute("stroke-width", (thickness + 2).toString());
             fg.setAttribute("stroke-dasharray", circumference);
             fg.setAttribute("stroke-dashoffset", Math.max(0, Math.min(circumference, (1 - value / max) * circumference)).toString());
         }, ["size", "thickness", "value", "max", "color"]);
@@ -336,8 +336,8 @@ var RingGauge = /** @class */ (function (_super) {
         label.classList.add("ui-gauge-ring__label");
         canvas.appendChild(label);
         _this.addHook(function (_a) {
-            var value = _a.value, lbl = _a.label;
-            label.innerHTML = value + " " + lbl;
+            var value = _a.value, hideValue = _a.hideValue, formatValue = _a.formatValue, lbl = _a.label;
+            label.innerHTML = hideValue ? lbl : (formatValue ? formatValue(value) : value) + " " + lbl;
         }, ["value", "label"]);
         _this.update();
         element.appendChild(wrapper);
@@ -420,7 +420,7 @@ var ArcGauge = /** @class */ (function (_super) {
         _this.addHook(function (_a) {
             var ht = _a.ht, hs = _a.hs, size = _a.size, r = _a.r, thickness = _a.thickness;
             maskPath.setAttribute("d", "M " + ht + " " + hs + " A " + r + " " + r + " 0 0 1 " + (size - ht) + " " + hs);
-            maskPath.setAttribute("stroke-width", thickness);
+            maskPath.setAttribute("stroke-width", thickness.toString());
         }, ["size", "thickness"]);
         mask.appendChild(maskPath);
         defs.appendChild(mask);
@@ -439,7 +439,7 @@ var ArcGauge = /** @class */ (function (_super) {
         _this.addHook(function (_a) {
             var ht = _a.ht, hs = _a.hs, size = _a.size, r = _a.r, thickness = _a.thickness;
             border.setAttribute("d", "M " + ht + " " + hs + " A " + r + " " + r + " 0 0 1 " + (size - ht) + " " + hs);
-            border.setAttribute("stroke-width", thickness + 1);
+            border.setAttribute("stroke-width", (thickness + 1).toString());
         }, ["size", "thickness"]);
         var borderHead = makeSVGElement("rect");
         borderHead.classList.add("ui-gauge-arc__border-head");
@@ -449,7 +449,7 @@ var ArcGauge = /** @class */ (function (_super) {
         _this.addHook(function (_a) {
             var hs = _a.hs, thickness = _a.thickness;
             borderHead.setAttribute("y", hs);
-            borderHead.setAttribute("width", thickness + 1);
+            borderHead.setAttribute("width", (thickness + 1).toString());
         }, ["size", "thickness"]);
         var borderTail = makeSVGElement("rect");
         borderTail.classList.add("ui-gauge-arc__border-tail");
@@ -459,7 +459,7 @@ var ArcGauge = /** @class */ (function (_super) {
             var hs = _a.hs, size = _a.size, thickness = _a.thickness;
             borderTail.setAttribute("x", (size - thickness - .5).toString());
             borderTail.setAttribute("y", hs);
-            borderTail.setAttribute("width", thickness + 1);
+            borderTail.setAttribute("width", (thickness + 1).toString());
         }, ["size", "thickness"]);
         //inner group
         var innerGroup = makeSVGElement("g");
@@ -475,8 +475,8 @@ var ArcGauge = /** @class */ (function (_super) {
         innerGroup.appendChild(rect);
         _this.addHook(function (_a) {
             var size = _a.size;
-            rect.setAttribute("width", size);
-            rect.setAttribute("height", size);
+            rect.setAttribute("width", size.toString());
+            rect.setAttribute("height", size.toString());
         }, ["size"]);
         var bg = makeSVGElement("path");
         bg.classList.add("ui-gauge-arc__bg");
@@ -522,15 +522,15 @@ var ArcGauge = /** @class */ (function (_super) {
         }, ["size"]);
         _this.addHook(function (_a) {
             var max = _a.max;
-            maxText.innerHTML = max;
+            maxText.innerHTML = max.toString();
         }, ["max"]);
         //setup gauge label
         var label = document.createElement("div");
         label.classList.add("ui-gauge-arc__label");
         canvas.appendChild(label);
         _this.addHook(function (_a) {
-            var value = _a.value, lbl = _a.label;
-            label.innerHTML = value + " " + lbl;
+            var value = _a.value, hideValue = _a.hideValue, formatValue = _a.formatValue, lbl = _a.label;
+            label.innerHTML = hideValue ? lbl : (formatValue ? formatValue(value) : value) + " " + lbl;
         }, ["value", "label"]);
         _this.update();
         element.appendChild(wrapper);
@@ -614,7 +614,7 @@ var MeterGauge = /** @class */ (function (_super) {
             marker.setAttribute("refX", "" + tickSize * .5);
             marker.setAttribute("refY", "" + thickness * .5);
             marker.setAttribute("markerWidth", tickSize);
-            marker.setAttribute("markerHeight", thickness);
+            marker.setAttribute("markerHeight", thickness.toString());
         }, ["thickness"]);
         var markerRect = makeSVGElement("rect");
         markerRect.setAttribute("x", "0");
@@ -696,7 +696,7 @@ var MeterGauge = /** @class */ (function (_super) {
         _this.addHook(function (_a) {
             var leftScale = _a.leftScale, bottomScale = _a.bottomScale, ir = _a.ir, arcFlag = _a.arcFlag, rightScale = _a.rightScale, thickness = _a.thickness;
             scaleOK.setAttribute("d", "M " + leftScale + " " + bottomScale + " A " + ir + " " + ir + " 0 " + arcFlag + " 1 " + rightScale + " " + bottomScale);
-            scaleOK.setAttribute("stroke-width", thickness);
+            scaleOK.setAttribute("stroke-width", thickness.toString());
         }, ["size", "thickness", "circle"]);
         var scaleWarning = makeSVGElement("path");
         scaleWarning.classList.add("ui-gauge-meter__scale");
@@ -708,7 +708,7 @@ var MeterGauge = /** @class */ (function (_super) {
                 return;
             }
             scaleWarning.setAttribute("d", "M " + leftScale + " " + bottomScale + " A " + ir + " " + ir + " 0 " + arcFlag + " 1 " + rightScale + " " + bottomScale);
-            scaleWarning.setAttribute("stroke-width", thickness);
+            scaleWarning.setAttribute("stroke-width", thickness.toString());
             scaleWarning.setAttribute("stroke-dasharray", innerCircumference * steps[1] / max + " " + innerCircumference * (steps[2] - steps[1]) / max + " " + innerCircumference);
         }, ["size", "thickness", "circle", "steps", "max"]);
         var scaleError = makeSVGElement("path");
@@ -722,7 +722,7 @@ var MeterGauge = /** @class */ (function (_super) {
                 return;
             }
             scaleError.setAttribute("d", "M " + leftScale + " " + bottomScale + " A " + ir + " " + ir + " 0 " + arcFlag + " 1 " + rightScale + " " + bottomScale);
-            scaleError.setAttribute("stroke-width", thickness);
+            scaleError.setAttribute("stroke-width", thickness.toString());
             scaleError.setAttribute("stroke-dasharray", innerCircumference * steps[0] / max + " " + innerCircumference * ((_b = steps[3]) !== null && _b !== void 0 ? _b : max - steps[0]) / max + " " + innerCircumference);
         }, ["size", "thickness", "circle", "steps", "max"]);
         //ticks
@@ -817,8 +817,14 @@ var MeterGauge = /** @class */ (function (_super) {
         value.classList.add("ui-gauge-meter__value");
         canvas.appendChild(value);
         _this.addHook(function (_a) {
-            var v = _a.value;
-            value.innerHTML = "" + v;
+            var v = _a.value, hideValue = _a.hideValue, formatValue = _a.formatValue;
+            if (hideValue) {
+                value.style.visibility = "hidden";
+            }
+            else {
+                value.style.visibility = null;
+                value.innerHTML = formatValue ? formatValue(v) : v.toString();
+            }
         }, ["value"]);
         _this.update();
         element.appendChild(wrapper);

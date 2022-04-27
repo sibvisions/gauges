@@ -14,6 +14,8 @@ export interface RingGaugeOptions {
     color?: string,
     steps?: [number, number, number, number],
     id?: string,
+    hideValue?: boolean,
+    formatValue?: (value: number) => string,
 }
 
 const defaultOptions:Partial<RingGaugeOptions> = {
@@ -86,7 +88,7 @@ export class RingGauge extends AbstractGauge<RingGaugeOptions> {
             maskCircle.setAttribute("cx", hs); 
             maskCircle.setAttribute("cy", hs);
             maskCircle.setAttribute("r", r);
-            maskCircle.setAttribute("stroke-width", thickness);
+            maskCircle.setAttribute("stroke-width", thickness.toString());
         }, [ "size", "thickness" ])
         mask.appendChild(maskCircle);
         defs.appendChild(mask);    
@@ -99,7 +101,7 @@ export class RingGauge extends AbstractGauge<RingGaugeOptions> {
             border.setAttribute("cx", hs); 
             border.setAttribute("cy", hs);
             border.setAttribute("r", r);
-            border.setAttribute("stroke-width", thickness + 1);
+            border.setAttribute("stroke-width", (thickness + 1).toString());
         }, [ "size", "thickness" ])
         svg.appendChild(border);
 
@@ -116,8 +118,8 @@ export class RingGauge extends AbstractGauge<RingGaugeOptions> {
         rect.setAttribute("y", "0");
         rect.setAttribute("fill", "transparent");
         this.addHook(({ size }) => {
-            rect.setAttribute("width", size);
-            rect.setAttribute("height", size);
+            rect.setAttribute("width", size.toString());
+            rect.setAttribute("height", size.toString());
         }, [ "size" ])
         group.appendChild(rect);
 
@@ -129,7 +131,7 @@ export class RingGauge extends AbstractGauge<RingGaugeOptions> {
             bg.setAttribute("cx", hs); 
             bg.setAttribute("cy", hs);
             bg.setAttribute("r", r);
-            bg.setAttribute("stroke-width", thickness + 2);
+            bg.setAttribute("stroke-width", (thickness + 2).toString());
         }, [ "size", "thickness" ])
         this.addHook(({ gradientID }) => {
             bg.setAttribute("stroke", `url(#${gradientID})`);
@@ -145,7 +147,7 @@ export class RingGauge extends AbstractGauge<RingGaugeOptions> {
             fg.setAttribute("r", r);
             fg.setAttribute("transform", `rotate(-90 ${hs} ${hs})`);
             fg.setAttribute("stroke", color);
-            fg.setAttribute("stroke-width", thickness + 2);
+            fg.setAttribute("stroke-width", (thickness + 2).toString());
             fg.setAttribute("stroke-dasharray", circumference);
             fg.setAttribute("stroke-dashoffset", Math.max(0, Math.min(circumference, (1 - value / max) * circumference)).toString());
         }, [ "size", "thickness", "value", "max", "color" ])
@@ -154,8 +156,8 @@ export class RingGauge extends AbstractGauge<RingGaugeOptions> {
         const label = document.createElement("div");
         label.classList.add("ui-gauge-ring__label");
         canvas.appendChild(label);
-        this.addHook(({ value, label: lbl }) => {
-            label.innerHTML = `${value} ${lbl}`;
+        this.addHook(({ value, hideValue, formatValue, label: lbl }) => {
+            label.innerHTML = hideValue ? lbl : `${formatValue ? formatValue(value) : value} ${lbl}`;
         }, [ "value", "label" ])
 
         this.update();

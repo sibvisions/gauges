@@ -14,14 +14,14 @@ export abstract class AbstractGauge<Options = {}> {
         };
     }
 
-    protected addHook(callback: Function, keys: string[]) {
+    protected addHook(callback: (data: Options & Record<string, any>) => void, keys: string[]) {
         this.hooks.push({
             callback,
             keys
         });
     }
 
-    protected abstract updateData(combinedOptions: Options) : any
+    protected abstract updateData(combinedOptions: Options) : Options & Record<string, any>
 
     protected update(options: Partial<Options> = {}) {
         const combinedOptions = { ...this.options, ...options };

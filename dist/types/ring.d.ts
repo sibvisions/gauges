@@ -12,6 +12,8 @@ export interface RingGaugeOptions {
     color?: string;
     steps?: [number, number, number, number];
     id?: string;
+    hideValue?: boolean;
+    formatValue?: (value: number) => string;
 }
 export declare class RingGauge extends AbstractGauge<RingGaugeOptions> {
     constructor(element: HTMLElement, options: RingGaugeOptions);
@@ -32,5 +34,7 @@ export declare class RingGauge extends AbstractGauge<RingGaugeOptions> {
         title?: string;
         steps?: [number, number, number, number];
         id?: string;
+        hideValue?: boolean;
+        formatValue?: (value: number) => string;
     };
 }

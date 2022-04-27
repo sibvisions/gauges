@@ -19,6 +19,8 @@ export interface MeterGaugeOptions {
     id?: string,
     tickLabelsInside?: boolean,
     tickLabelOffset?: number,
+    hideValue?: boolean,
+    formatValue?: (value: number) => string,
 }
 
 const defaultOptions:Partial<MeterGaugeOptions> = {
@@ -87,7 +89,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
             marker.setAttribute("refX", `${tickSize * .5}`);
             marker.setAttribute("refY", `${thickness * .5}`);
             marker.setAttribute("markerWidth", tickSize);
-            marker.setAttribute("markerHeight", thickness);
+            marker.setAttribute("markerHeight", thickness.toString());
         }, [ "thickness" ])
 
         const markerRect = makeSVGElement("rect");
@@ -168,7 +170,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         scaleGroup.appendChild(scaleOK);
         this.addHook(({ leftScale, bottomScale, ir, arcFlag, rightScale, thickness }) => {
             scaleOK.setAttribute("d", `M ${leftScale} ${bottomScale} A ${ir} ${ir} 0 ${arcFlag} 1 ${rightScale} ${bottomScale}`);
-            scaleOK.setAttribute("stroke-width", thickness);
+            scaleOK.setAttribute("stroke-width", thickness.toString());
         }, [ "size", "thickness", "circle" ])
 
         const scaleWarning = makeSVGElement("path");
@@ -178,7 +180,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         this.addHook(({ leftScale, bottomScale, ir, arcFlag, rightScale, thickness, innerCircumference, steps, max }) => {
             if(!steps || steps.length < 3 || !steps[1] || !steps[2]) { return }
             scaleWarning.setAttribute("d", `M ${leftScale} ${bottomScale} A ${ir} ${ir} 0 ${arcFlag} 1 ${rightScale} ${bottomScale}`);
-            scaleWarning.setAttribute("stroke-width", thickness);
+            scaleWarning.setAttribute("stroke-width", thickness.toString());
             scaleWarning.setAttribute("stroke-dasharray", `${innerCircumference * steps[1] / max} ${innerCircumference * (steps[2] - steps[1]) / max} ${innerCircumference}`);
         }, [ "size", "thickness", "circle", "steps", "max" ])
 
@@ -189,7 +191,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         this.addHook(({ leftScale, bottomScale, ir, arcFlag, rightScale, thickness, innerCircumference, steps, max }) => {
             if(!steps || steps.length < 4 || !steps[0] && !steps[3]) { return }
             scaleError.setAttribute("d", `M ${leftScale} ${bottomScale} A ${ir} ${ir} 0 ${arcFlag} 1 ${rightScale} ${bottomScale}`);
-            scaleError.setAttribute("stroke-width", thickness);
+            scaleError.setAttribute("stroke-width", thickness.toString());
             scaleError.setAttribute("stroke-dasharray", `${innerCircumference * steps[0] / max} ${innerCircumference * (steps[3] ?? max - steps[0]) / max} ${innerCircumference}`);
         }, [ "size", "thickness", "circle", "steps", "max" ])
 
@@ -285,8 +287,13 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         const value = document.createElement("div");
         value.classList.add("ui-gauge-meter__value");
         canvas.appendChild(value);
-        this.addHook(({ value: v }) => {
-            value.innerHTML = `${v}`;
+        this.addHook(({ value: v, hideValue, formatValue }) => {
+            if (hideValue) {
+                value.style.visibility = "hidden";
+            } else {
+                value.style.visibility = null;
+                value.innerHTML = formatValue ? formatValue(v) : v.toString();
+            }
         }, [ "value" ])
 
         this.update();

@@ -30,7 +30,8 @@
                 height: 300,
                 title: "Test Ring",
                 label: "Ring",
-                steps: [10,30,70,90]
+                steps: [10,30,70,90],
+                formatValue: (v) => `((${v}))`
             });
 
             elem = document.querySelector("#arc-gauge");
@@ -40,7 +41,8 @@
                 size: 300, 
                 title: "Test Arc",
                 label: "Arc",
-                steps: [10,30,70,90]
+                steps: [10,30,70,90],
+                hideValue: true,
             });
 
             elem = document.querySelector("#meter-gauge");
