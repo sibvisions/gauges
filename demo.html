@@ -4,20 +4,36 @@
         <title>UIGauges Demo</title>
         <link rel="stylesheet" href="dist/bundle.min.css">
         <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+            }
+
             .gauges {
                 display: grid;
                 padding: 3rem;
                 grid-template-columns: 1fr 1fr;
+                grid-template-rows: 50% 50%;
                 gap: 3rem;
+                height: 100%;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .gauges {
+                width: 100%;
+                height: 100%;
             }
         </style>
     </head>
     <body>
         <div class="gauges">
-            <div id="ring-gauge" style="width: 300px;"></div>
-            <div id="arc-gauge" style="width: 300px;"></div>
-            <div id="meter-gauge" style="width: 300px;"></div>
-            <div id="speed-gauge" style="width: 300px;"></div>
+            <div id="ring-gauge"></div>
+            <div id="arc-gauge"></div>
+            <div id="meter-gauge"></div>
+            <div id="speed-gauge"></div>
         </div>
 
         <script src="./dist/bundle.min.js"></script>
