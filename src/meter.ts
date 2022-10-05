@@ -220,7 +220,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
             subTicks.setAttribute("stroke-dashoffset", `${tickSize * .5}`);
             subTicks.setAttribute("stroke-dasharray", `${subDasharray.join(' ')}`);
             subTicks.setAttribute("visibility", subDasharray.length ? "" : "hidden");
-        }, [ "size", "thickness", "ticks", "circle" ])
+        }, [ "size", "thickness", "ticks", "subTicks", "circle" ])
 
 
         //tick labels
@@ -233,7 +233,6 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
             });
             tickLabels.length = 0;
 
-            //TODO properly update tick labels if other size options change
             [...Array(ticks).fill(null).map((v,i) => i)].map((i, idx) => {
                 const a = idx * Math.PI * 2 * circle / (ticks - 1) + Math.PI * .5 + (1 - circle) * Math.PI;
                 const x = parseFloat((hs + Math.cos(a) * tlr).toFixed(4));
@@ -247,7 +246,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
                 tickLabels.push(tl);
                 tickLabelGroup.appendChild(tl);
             });
-        }, ["ticks"])
+        }, ["ticks", "max", "size", "tlr"])
 
         //label
         const label = makeSVGElement("text");

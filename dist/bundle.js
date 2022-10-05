@@ -758,7 +758,7 @@
                 subTicks.setAttribute("stroke-dashoffset", "" + tickSize * .5);
                 subTicks.setAttribute("stroke-dasharray", "" + subDasharray.join(' '));
                 subTicks.setAttribute("visibility", subDasharray.length ? "" : "hidden");
-            }, ["size", "thickness", "ticks", "circle"]);
+            }, ["size", "thickness", "ticks", "subTicks", "circle"]);
             //tick labels
             var tickLabels = [];
             var tickLabelGroup = makeSVGElement("g");
@@ -769,7 +769,6 @@
                     tl.remove();
                 });
                 tickLabels.length = 0;
-                //TODO properly update tick labels if other size options change
                 __spreadArray([], Array(ticks).fill(null).map(function (v, i) { return i; }), true).map(function (i, idx) {
                     var a = idx * Math.PI * 2 * circle / (ticks - 1) + Math.PI * .5 + (1 - circle) * Math.PI;
                     var x = parseFloat((hs + Math.cos(a) * tlr).toFixed(4));
@@ -782,7 +781,7 @@
                     tickLabels.push(tl);
                     tickLabelGroup.appendChild(tl);
                 });
-            }, ["ticks"]);
+            }, ["ticks", "max", "size", "tlr"]);
             //label
             var label = makeSVGElement("text");
             label.classList.add("ui-gauge-meter__label");
