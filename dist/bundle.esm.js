@@ -796,7 +796,7 @@ var MeterGauge = /** @class */ (function (_super) {
         _this.addHook(function (_a) {
             var hs = _a.hs, needleRotation = _a.needleRotation;
             needleGroup.setAttribute("style", "transform: rotate(" + needleRotation + "deg); transform-origin: " + hs + "px " + hs + "px;");
-        }, ["size", "value"]);
+        }, ["size", "value", "max", "circle"]);
         var needle = makeSVGElement("path");
         needleGroup.appendChild(needle);
         _this.addHook(function (_a) {

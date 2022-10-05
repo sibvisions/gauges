@@ -266,7 +266,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         tickShiftGroup.appendChild(needleGroup);
         this.addHook(({ hs, needleRotation }) => {
             needleGroup.setAttribute("style", `transform: rotate(${needleRotation}deg); transform-origin: ${hs}px ${hs}px;`);
-        }, [ "size", "value" ])
+        }, [ "size", "value", "max", "circle" ])
 
         const needle = makeSVGElement("path");
         needleGroup.appendChild(needle);
