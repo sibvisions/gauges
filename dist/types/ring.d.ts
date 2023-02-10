@@ -2,6 +2,7 @@ import { AbstractGauge } from './gauge';
 import './styles/ring.scss';
 export interface RingGaugeOptions {
     value: number;
+    min?: number;
     max: number;
     label: string;
     size?: number;
@@ -25,6 +26,7 @@ export declare class RingGauge extends AbstractGauge<RingGaugeOptions> {
         gradientID: string;
         color: string;
         value: number;
+        min?: number;
         max: number;
         label: string;
         size?: number;

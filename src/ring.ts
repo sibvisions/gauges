@@ -4,6 +4,7 @@ import './styles/ring.scss';
 
 export interface RingGaugeOptions {
     value: number,
+    min?: number,
     max: number,
     label: string,
     size?: number,
@@ -20,6 +21,7 @@ export interface RingGaugeOptions {
 
 const defaultOptions:Partial<RingGaugeOptions> = {
     value: 0, 
+    min: 0,
     max: 10,
     size: 100, 
     thickness: 20, 
@@ -141,7 +143,7 @@ export class RingGauge extends AbstractGauge<RingGaugeOptions> {
         const fg = makeSVGElement("circle");
         fg.classList.add("ui-gauge-ring__fg");
         group.appendChild(fg);
-        this.addHook(({ hs, r, thickness, circumference, value, max, color }) => {
+        this.addHook(({ hs, r, thickness, circumference, value, min, max, color }) => {
             fg.setAttribute("cx", hs); 
             fg.setAttribute("cy", hs);
             fg.setAttribute("r", r);
@@ -149,8 +151,8 @@ export class RingGauge extends AbstractGauge<RingGaugeOptions> {
             fg.setAttribute("stroke", color);
             fg.setAttribute("stroke-width", (thickness + 2).toString());
             fg.setAttribute("stroke-dasharray", circumference);
-            fg.setAttribute("stroke-dashoffset", Math.max(0, Math.min(circumference, (1 - value / max) * circumference)).toString());
-        }, [ "size", "thickness", "value", "max", "color" ])
+            fg.setAttribute("stroke-dashoffset", Math.max(0, Math.min(circumference, (1 - (value - min) / (max - min)) * circumference)).toString());
+        }, [ "size", "thickness", "value", "min", "max", "color" ])
 
         //setup gauge label
         const label = document.createElement("div");

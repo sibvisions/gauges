@@ -209,6 +209,7 @@
 
     var defaultOptions$3 = {
         value: 0,
+        min: 0,
         max: 10,
         size: 100,
         thickness: 20
@@ -327,7 +328,7 @@
             fg.classList.add("ui-gauge-ring__fg");
             group.appendChild(fg);
             _this.addHook(function (_a) {
-                var hs = _a.hs, r = _a.r, thickness = _a.thickness, circumference = _a.circumference, value = _a.value, max = _a.max, color = _a.color;
+                var hs = _a.hs, r = _a.r, thickness = _a.thickness, circumference = _a.circumference, value = _a.value, min = _a.min, max = _a.max, color = _a.color;
                 fg.setAttribute("cx", hs);
                 fg.setAttribute("cy", hs);
                 fg.setAttribute("r", r);
@@ -335,8 +336,8 @@
                 fg.setAttribute("stroke", color);
                 fg.setAttribute("stroke-width", (thickness + 2).toString());
                 fg.setAttribute("stroke-dasharray", circumference);
-                fg.setAttribute("stroke-dashoffset", Math.max(0, Math.min(circumference, (1 - value / max) * circumference)).toString());
-            }, ["size", "thickness", "value", "max", "color"]);
+                fg.setAttribute("stroke-dashoffset", Math.max(0, Math.min(circumference, (1 - (value - min) / (max - min)) * circumference)).toString());
+            }, ["size", "thickness", "value", "min", "max", "color"]);
             //setup gauge label
             var label = document.createElement("div");
             label.classList.add("ui-gauge-ring__label");
