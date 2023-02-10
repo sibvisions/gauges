@@ -52,7 +52,8 @@
 
             elem = document.querySelector("#arc-gauge");
             var arc = new UIGauges.ArcGauge(elem, {
-                value: 12, 
+                value: 12,
+                min: -100, 
                 max: 100,
                 size: 300, 
                 title: "Test Arc",
@@ -85,7 +86,7 @@
                     value: Math.round(Math.random() * 100)
                 })
                 arc.update({
-                    value: Math.round(Math.random() * 100)
+                    value: Math.round(100 - Math.random() * 200)
                 })
                 meter.update({
                     value: Math.round(Math.random() * 100)

@@ -364,6 +364,7 @@
 
     var defaultOptions$2 = {
         value: 0,
+        min: 0,
         max: 10,
         size: 100,
         thickness: 20
@@ -500,23 +501,26 @@
             fg.classList.add("ui-gauge-arc__fg");
             innerGroup.appendChild(fg);
             _this.addHook(function (_a) {
-                var ht = _a.ht, hs = _a.hs, r = _a.r, size = _a.size, thickness = _a.thickness, circumference = _a.circumference, value = _a.value, max = _a.max, color = _a.color;
+                var ht = _a.ht, hs = _a.hs, r = _a.r, size = _a.size, thickness = _a.thickness, circumference = _a.circumference, value = _a.value, min = _a.min, max = _a.max, color = _a.color;
                 fg.setAttribute("d", "M " + ht + " " + hs + " A " + r + " " + r + " 0 0 1 " + (size - ht) + " " + hs);
                 fg.setAttribute("stroke", color);
                 fg.setAttribute("stroke-width", "" + (thickness + 2));
                 fg.setAttribute("stroke-dasharray", "" + circumference);
-                fg.setAttribute("stroke-dashoffset", Math.max(0, Math.min(circumference, (1 - value / max) * circumference)).toString());
-            }, ["size", "value", "max", "color"]);
+                fg.setAttribute("stroke-dashoffset", Math.max(0, Math.min(circumference, (1 - (value - min) / (max - min)) * circumference)).toString());
+            }, ["size", "value", "min", "max", "color"]);
             var minText = makeSVGElement("text");
             minText.setAttribute("text-anchor", "middle");
             minText.setAttribute("dominant-baseline", "hanging");
-            minText.innerHTML = "0";
             outerGroup.appendChild(minText);
             _this.addHook(function (_a) {
                 var hs = _a.hs, ht = _a.ht;
                 minText.setAttribute("x", ht);
                 minText.setAttribute("y", "" + (hs + 4));
             }, ["size"]);
+            _this.addHook(function (_a) {
+                var min = _a.min;
+                minText.innerHTML = min.toString();
+            }, ["min"]);
             var maxText = makeSVGElement("text");
             maxText.setAttribute("text-anchor", "middle");
             maxText.setAttribute("dominant-baseline", "hanging");

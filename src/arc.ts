@@ -4,6 +4,7 @@ import './styles/arc.scss';
 
 export interface ArcGaugeOptions {
     value: number,
+    min?: number,
     max: number,
     label: string,
     size?: number,
@@ -20,6 +21,7 @@ export interface ArcGaugeOptions {
 
 const defaultOptions:Partial<ArcGaugeOptions> = {
     value: 0, 
+    min: 0,
     max: 10,
     size: 100, 
     thickness: 20, 
@@ -159,23 +161,25 @@ export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         const fg = makeSVGElement("path");
         fg.classList.add("ui-gauge-arc__fg");
         innerGroup.appendChild(fg);
-        this.addHook(({ ht, hs, r, size, thickness, circumference, value, max, color }) => {
+        this.addHook(({ ht, hs, r, size, thickness, circumference, value, min, max, color }) => {
             fg.setAttribute("d", `M ${ht} ${hs} A ${r} ${r} 0 0 1 ${size - ht} ${hs}`);
             fg.setAttribute("stroke", color);
             fg.setAttribute("stroke-width", `${thickness + 2}`);
             fg.setAttribute("stroke-dasharray", `${circumference}`);
-            fg.setAttribute("stroke-dashoffset", Math.max(0, Math.min(circumference, (1 - value / max) * circumference)).toString());
-        }, [ "size", "value", "max", "color" ]);
+            fg.setAttribute("stroke-dashoffset", Math.max(0, Math.min(circumference, (1 - (value - min) / (max - min)) * circumference)).toString());
+        }, [ "size", "value", "min", "max", "color" ]);
 
         const minText = makeSVGElement("text");
         minText.setAttribute("text-anchor", "middle");
         minText.setAttribute("dominant-baseline", "hanging");
-        minText.innerHTML = "0";
         outerGroup.appendChild(minText);
         this.addHook(({ hs, ht }) => {
             minText.setAttribute("x", ht);
             minText.setAttribute("y", `${hs + 4}`);
         }, [ "size" ]);
+        this.addHook(({ min }) => {
+            minText.innerHTML = min.toString();
+        }, [ "min" ]);
 
         const maxText = makeSVGElement("text");
         maxText.setAttribute("text-anchor", "middle");

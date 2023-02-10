@@ -2,6 +2,7 @@ import { AbstractGauge } from './gauge';
 import './styles/arc.scss';
 export interface ArcGaugeOptions {
     value: number;
+    min?: number;
     max: number;
     label: string;
     size?: number;
@@ -26,6 +27,7 @@ export declare class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
         gradientID: string;
         color: string;
         value: number;
+        min?: number;
         max: number;
         label: string;
         size?: number;
