@@ -30,7 +30,7 @@ const defaultOptions:Partial<ArcGaugeOptions> = {
 export class ArcGauge extends AbstractGauge<ArcGaugeOptions> {
 
     constructor (element: HTMLElement, options: ArcGaugeOptions) {
-        super(options, maybeScaleDefaults(defaultOptions, options.size));
+        super(options, maybeScaleDefaults(defaultOptions, options.size, ["min", "max", "value"]));
 
         const wrapper = document.createElement("div");
         wrapper.classList.add("ui-gauge");

@@ -2,6 +2,7 @@ import { AbstractGauge } from './gauge';
 import './styles/meter.scss';
 export interface MeterGaugeOptions {
     value: number;
+    min?: number;
     max: number;
     label: string;
     size?: number;
@@ -55,6 +56,7 @@ export declare class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         sizeScale: number;
         color: string;
         value: number;
+        min?: number;
         max: number;
         label: string;
         size?: number;

@@ -4,6 +4,7 @@ import './styles/meter.scss';
 
 export interface MeterGaugeOptions {
     value: number,
+    min?: number,
     max: number,
     label: string,
     size?: number,
@@ -25,6 +26,7 @@ export interface MeterGaugeOptions {
 
 const defaultOptions:Partial<MeterGaugeOptions> = {
     value: 0, 
+    min: 0,
     max: 10,
     size: 100, 
     thickness: 4,
@@ -38,7 +40,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
     protected wrapper: HTMLDivElement;
 
     constructor (element: HTMLElement, options: MeterGaugeOptions) {
-        super(options, maybeScaleDefaults(defaultOptions, options.size, ["ticks", "subTicks", "circle", "max"]));
+        super(options, maybeScaleDefaults(defaultOptions, options.size, ["ticks", "subTicks", "circle", "min", "max", "value"]));
 
         const wrapper = document.createElement("div");
         this.wrapper = wrapper;
@@ -177,23 +179,23 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         scaleWarning.classList.add("ui-gauge-meter__scale");
         scaleWarning.classList.add("ui-gauge-meter__scale--warning");
         scaleGroup.appendChild(scaleWarning);
-        this.addHook(({ leftScale, bottomScale, ir, arcFlag, rightScale, thickness, innerCircumference, steps, max }) => {
-            if(!steps || steps.length < 3 || !steps[1] || !steps[2]) { return }
+        this.addHook(({ leftScale, bottomScale, ir, arcFlag, rightScale, thickness, innerCircumference, steps, min, max }) => {
+            if(!steps || steps.length < 3 || typeof steps[1] !== "number" || typeof steps[2] !== "number") { return }
             scaleWarning.setAttribute("d", `M ${leftScale} ${bottomScale} A ${ir} ${ir} 0 ${arcFlag} 1 ${rightScale} ${bottomScale}`);
             scaleWarning.setAttribute("stroke-width", thickness.toString());
-            scaleWarning.setAttribute("stroke-dasharray", `${innerCircumference * steps[1] / max} ${innerCircumference * (steps[2] - steps[1]) / max} ${innerCircumference}`);
-        }, [ "size", "thickness", "circle", "steps", "max" ])
+            scaleWarning.setAttribute("stroke-dasharray", `${innerCircumference * (steps[1] - min) / (max - min)} ${innerCircumference * (steps[2] - steps[1]) / (max - min)} ${innerCircumference}`);
+        }, [ "size", "thickness", "circle", "steps", "min", "max" ])
 
         const scaleError = makeSVGElement("path");
         scaleError.classList.add("ui-gauge-meter__scale");
         scaleError.classList.add("ui-gauge-meter__scale--error");
         scaleGroup.appendChild(scaleError);
-        this.addHook(({ leftScale, bottomScale, ir, arcFlag, rightScale, thickness, innerCircumference, steps, max }) => {
-            if(!steps || steps.length < 4 || !steps[0] && !steps[3]) { return }
+        this.addHook(({ leftScale, bottomScale, ir, arcFlag, rightScale, thickness, innerCircumference, steps, min, max }) => {
+            if(!steps || steps.length < 4 || typeof steps[0] !== "number" && typeof steps[3] !== "number") { return }
             scaleError.setAttribute("d", `M ${leftScale} ${bottomScale} A ${ir} ${ir} 0 ${arcFlag} 1 ${rightScale} ${bottomScale}`);
             scaleError.setAttribute("stroke-width", thickness.toString());
-            scaleError.setAttribute("stroke-dasharray", `${innerCircumference * steps[0] / max} ${innerCircumference * (steps[3] ?? max - steps[0]) / max} ${innerCircumference}`);
-        }, [ "size", "thickness", "circle", "steps", "max" ])
+            scaleError.setAttribute("stroke-dasharray", `${innerCircumference * (steps[0] - min) / (max - min)} ${innerCircumference * ((steps[3] ?? max) - steps[0]) / (max - min)} ${innerCircumference}`);
+        }, [ "size", "thickness", "circle", "steps", "min", "max" ])
 
         //ticks
         const ticks = makeSVGElement("path");
@@ -227,7 +229,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         const tickLabels = [];
         const tickLabelGroup = makeSVGElement("g");
         tickShiftGroup.appendChild(tickLabelGroup);
-        this.addHook(({ ticks, circle, hs, tlr, max }) => {
+        this.addHook(({ ticks, circle, hs, tlr, min, max }) => {
             tickLabels.forEach(tl => {
                 tl.remove();
             });
@@ -242,11 +244,11 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
                 tl.classList.add("ui-gauge-meter__ticklabel");
                 tl.setAttribute("x", `${x}`);
                 tl.setAttribute("y", `${y}`);
-                tl.innerHTML = (idx * max / (ticks - 1)).toFixed(1).replace(/[,.]0$/, '');
+                tl.innerHTML = (min + idx * (max - min) / (ticks - 1)).toFixed(1).replace(/[,.]0$/, '');
                 tickLabels.push(tl);
                 tickLabelGroup.appendChild(tl);
             });
-        }, ["ticks", "max", "size", "tlr"])
+        }, ["ticks", "min", "max", "size", "tlr"])
 
         //label
         const label = makeSVGElement("text");
@@ -266,7 +268,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         tickShiftGroup.appendChild(needleGroup);
         this.addHook(({ hs, needleRotation }) => {
             needleGroup.setAttribute("style", `transform: rotate(${needleRotation}deg); transform-origin: ${hs}px ${hs}px;`);
-        }, [ "size", "value", "max", "circle" ])
+        }, [ "size", "value", "min", "max", "circle" ])
 
         const needle = makeSVGElement("path");
         needleGroup.appendChild(needle);
@@ -301,7 +303,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
     }
 
     protected updateData(combinedOptions: MeterGaugeOptions) {
-        const { value, size, color, id, thickness, steps, tickLabelsInside, circle, max, ticks, subTicks, tickLabelOffset } = combinedOptions;
+        const { value, size, color, id, thickness, steps, tickLabelsInside, circle, min, max, ticks, subTicks, tickLabelOffset } = combinedOptions;
 
         const sizeScale = size / 100;
         //precalculate various values
@@ -322,7 +324,7 @@ export class MeterGauge extends AbstractGauge<MeterGaugeOptions> {
         const tickSize = 1;
         const subTickSize = .5;
         const needleLength = hs + thickness;
-        const needleRotation = 360 * circle * value / max - 180 * circle;
+        const needleRotation = 360 * circle * (value - min) / (max - min) - 180 * circle;
     
         let dasharray = [tickSize, circumference / (ticks - 1) - tickSize];
         let subDasharray: number[] = [];

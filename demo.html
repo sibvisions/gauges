@@ -58,14 +58,15 @@
                 size: 300, 
                 title: "Test Arc",
                 label: "Arc",
-                steps: [10,30,70,90],
+                steps: [-80,-30,30,90],
                 hideValue: true,
             });
 
             elem = document.querySelector("#meter-gauge");
             var meter = new UIGauges.MeterGauge(elem, {
                 value: 0, 
-                max: 100,
+                min: -50,
+                max: 50,
                 size: 300, 
                 title: "Test Meter",
                 label: "Meter",
@@ -74,11 +75,12 @@
             elem = document.querySelector("#speed-gauge");
             var speed = new UIGauges.SpeedometerGauge(elem, {
                 value: 0, 
-                max: 100,
+                min: -50,
+                max: 50,
                 size: 300, 
                 title: "Test Speedometer",
                 label: "Speedometer",
-                steps: [10,30,70,90],
+                steps: [-20,30,40,45],
             });
 
             setInterval(function() {
@@ -89,10 +91,10 @@
                     value: Math.round(100 - Math.random() * 200)
                 })
                 meter.update({
-                    value: Math.round(Math.random() * 100)
+                    value: Math.round(50 - Math.random() * 100)
                 })
                 speed.update({
-                    value: Math.round(Math.random() * 100)
+                    value: Math.round(50 - Math.random() * 100)
                 })
             }, 1000)
         </script>

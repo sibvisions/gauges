@@ -30,7 +30,7 @@ const defaultOptions:Partial<RingGaugeOptions> = {
 export class RingGauge extends AbstractGauge<RingGaugeOptions> {
 
     constructor (element: HTMLElement, options: RingGaugeOptions) {
-        super(options, maybeScaleDefaults(defaultOptions, options.size));
+        super(options, maybeScaleDefaults(defaultOptions, options.size, ["min", "max", "value"]));
 
         const wrapper = document.createElement("div");
         wrapper.classList.add("ui-gauge");
