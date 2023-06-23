@@ -90,8 +90,13 @@
                 arc.update({
                     value: Math.round(100 - Math.random() * 200)
                 })
+
+                const min = Math.round(50 - Math.random() * 100);
+                const max = min + Math.round(Math.random() * 100);
                 meter.update({
-                    value: Math.round(50 - Math.random() * 100)
+                    min,
+                    max,
+                    value: min + Math.round(Math.random() * (max - min)) 
                 })
                 speed.update({
                     value: Math.round(50 - Math.random() * 100)
