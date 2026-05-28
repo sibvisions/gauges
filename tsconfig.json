@@ -4,5 +4,9 @@
             "DOM",
             "ES2016"
         ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strictNullChecks": false,
+    "noImplicitAny": false
     }
   }
